@@ -14,7 +14,7 @@ function Header () {
             <Toolbar>
               <CameraIcon className="icon" />
               <Typography variant="h5" color="inherit" noWrap>
-                Z-Tracker
+                Trash-O-Gramm
               </Typography>
             </Toolbar>
           </AppBar>

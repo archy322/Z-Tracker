@@ -5,7 +5,8 @@ import Footer from "../Footer/Footer";
 import Header from "../Header/Header";
 import CssBaseline from "@material-ui/core/CssBaseline/CssBaseline";
 import PostCardsList from "../PostCardsList/PostCardsList";
-import Typography from "@material-ui/core/Typography/Typography";
+import CircularProgress from '@material-ui/core/CircularProgress';
+import axios from 'axios';
 
 const styles = theme => ({
   appBar: {
@@ -37,11 +38,16 @@ const styles = theme => ({
   },
   cardContent: {
     flexGrow: 1,
-    textAlign: 'center'
+    textAlign: 'center',
+    wordBreak: 'break-all',
   },
   cardActions: {
     display: 'flex',
     justifyContent: 'space-between'
+  },
+  preLoader: {
+    display: 'grid',
+    margin: '200px auto',
   },
   cardModal: {
     position: 'absolute',
@@ -55,50 +61,52 @@ const styles = theme => ({
     backgroundSize: 'cover',
     backgroundPosition: 'center center'
   },
+  trashLink: {
+    fontWeight: 700,
+    fontSize: '1.5em',
+    display: 'grid',
+  },
   footer: {
     backgroundColor: theme.palette.background.paper,
     padding: theme.spacing.unit * 6,
   },
 });
 
-
-const card = {
-  "id": 1896584268071972630,
-  "text": "I'll never meet the ground",
-  "created_at": new Date().toISOString().slice(0, 10),
-  "display_url": "https://instagram.fiev15-1.fna.fbcdn.net/vp/23a1afc3a3ee1e0bba9baeeaeb63cab9/5C6CCDE8/t51.2885-15/e35/44741347_717604408595777_7196075761032818946_n.jpg"
-};
-
 class Album extends Component {
   constructor(props) {
     super(props);
     this.props = props;
     this.state = {
-      cards: []
+      cards: [],
+      creds: {
+        username: '',
+        link: '',
+      },
     }
   }
 
   componentDidMount = () => {
-    fetch('http://b1f6106e.ngrok.io')
-        .then(response => response.json())
-        .then(response => {
-          console.log(response);
+    axios.get('http://b1f6106e.ngrok.io')
+      .then(response => {
+        this.setState({
+          cards: response.data['posts'],
+          creds: response.data['creds'],
         })
+      });
   };
 
   render = () => {
     const {classes} = this.props;
-    const {cards} = this.state;
+    const {cards, creds} = this.state;
     return (
         <React.Fragment>
           <CssBaseline/>
           <Header/>
           {
             this.state.cards.length > 0
-                ? <PostCardsList postCards={cards} classes={classes}/>
-                : <Typography gutterBottom variant="h4" component="h2">
-                    There is no luxury photo materials(
-                  </Typography>
+                ? <PostCardsList postCards={cards} creds={creds} classes={classes}/>
+                : <CircularProgress size={100} className={classes.preLoader}>
+                  </CircularProgress>
           }
 
           <Footer className={classes.footer}/>
